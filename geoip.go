@@ -1,3 +1,10 @@
+// A pure Go interface to the free MaxMind GeoIP database.
+//
+// eg.
+//
+//      geo, err := geoip.New()
+//      country := geo.Lookup(net.ParseIP("1.1.1.1"))
+//      fmt.Printf("%s\n", country)
 package geoip
 
 import (
@@ -12,12 +19,10 @@ import (
 	"unsafe"
 )
 
-type Range struct {
+type ipRange struct {
 	start, end [4]byte
 	country    [2]byte
 }
-
-type RangeArray []*Range
 
 type Country struct {
 	// ISO 3166-1 short country code.
@@ -31,7 +36,7 @@ func (c *Country) String() string {
 }
 
 type GeoIP struct {
-	ranges    []*Range
+	ranges    []*ipRange
 	countries map[string]*Country
 }
 
@@ -46,10 +51,10 @@ func New() (*GeoIP, error) {
 	}
 
 	rangesn := len(rb) / 10
-	ranges := make([]*Range, rangesn)
+	ranges := make([]*ipRange, rangesn)
 
 	for i := 0; i < rangesn; i++ {
-		ranges[i] = (*Range)(unsafe.Pointer(&rb[i*10]))
+		ranges[i] = (*ipRange)(unsafe.Pointer(&rb[i*10]))
 	}
 
 	// Load countries
@@ -82,7 +87,10 @@ func (g *GeoIP) Lookup(ip net.IP) *Country {
 	i := sort.Search(len(g.ranges), func(i int) bool {
 		return bytes.Compare(g.ranges[i].start[:], bip) > 0
 	})
-	r := g.ranges[i-1]
+	if i > 0 {
+		i--
+	}
+	r := g.ranges[i]
 	if bytes.Compare(bip, r.start[:]) >= 0 && bytes.Compare(bip, r.end[:]) <= 0 {
 		return g.countries[string(r.country[:])]
 	}
