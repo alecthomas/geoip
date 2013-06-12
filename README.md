@@ -1,6 +1,8 @@
 # A pure Go interface to the free [MaxMind GeoIP](http://dev.maxmind.com/geoip/legacy/downloadable) database
 
-This implementation compiles an optimized version of the database into Go (using [gobundle](http://github.com/alecthomas/gobundle)), and so does not rely on external files.
+This package provides fast lookups of country by IP address.
+
+This implementation compiles an optimized version of the database into Go (using [gobundle](http://github.com/alecthomas/gobundle)), and so does not rely on external files. The in-memory table size is around ~800KB.
 
 ### Caveats
 
