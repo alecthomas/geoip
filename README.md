@@ -14,7 +14,7 @@ Currently only IPv4->country lookups are supported.
 $ # Library
 $ go get github.com/alecthomas/geoip
 $ # Command
-$ go get github.com/alecthomas/cmd/geoip
+$ go get github.com/alecthomas/geoip/cmd/geoip
 ```
 
 ### Usage
