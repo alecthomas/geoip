@@ -11,12 +11,13 @@ import (
 	"bytes"
 	"encoding/csv"
 	"fmt"
-	"github.com/alecthomas/geoip/db"
 	"io"
 	"io/ioutil"
 	"net"
 	"sort"
 	"unsafe"
+
+	"github.com/alecthomas/geoip/db"
 )
 
 type ipRange struct {
@@ -83,7 +84,7 @@ func New() (*GeoIP, error) {
 
 // Find country of IP.
 func (g *GeoIP) Lookup(ip net.IP) *Country {
-	bip := []byte(ip)[12:]
+	bip := []byte(ip.To4())
 	i := sort.Search(len(g.ranges), func(i int) bool {
 		return bytes.Compare(g.ranges[i].start[:], bip) > 0
 	})
